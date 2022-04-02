@@ -45,30 +45,19 @@ public class MainActivity extends AppCompatActivity {
         btn_cityID.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String url ="https://www.metaweather.com/api/location/search/?query=" + et_dataInput.getText().toString();
+                WeatherDataService weatherDataService = new WeatherDataService(MainActivity.this);
 
-                JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+                weatherDataService.getCityID(et_dataInput.getText().toString(), new WeatherDataService.VolleyResponseListener() {
                     @Override
-                    public void onResponse(JSONArray response) {
-                        String cityID = "";
-
-                        try {
-                            JSONObject cityInfo = response.getJSONObject(0);
-                            cityID = cityInfo.getString("woeid");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                        Toast.makeText(MainActivity.this, "City ID: " + cityID, Toast.LENGTH_SHORT).show();
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
+                    public void onError(String message) {
                         Toast.makeText(MainActivity.this, "Wrong", Toast.LENGTH_SHORT).show();
                     }
-                });
 
-                MySingleton.getInstance(MainActivity.this).addToRequestQueue(request);
+                    @Override
+                    public void onResponse(String cityID) {
+                        Toast.makeText(MainActivity.this, "Return " + cityID, Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
 
